@@ -7,3 +7,7 @@ def articles_list(request):
         "articles" : articles,
     }
     return render(request, "articles_list.html", context)
+
+def article_details(request, article_id):
+    context = { "article" : Article.objects.get(id=article_id)}
+    return render(request, 'article_details.html', context)
