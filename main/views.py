@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from .models import Article
 from .forms import ArticleForm
 
-
 def articles_list(request):
     articles = Article.objects.all()
     context = {
@@ -22,10 +21,9 @@ def create_article(request):
 			article = form.save(commit=False)
 			article.author = request.user
 			article.save()
+			return redirect('article-details', article.id)
 
-			return redirect("article-details", article.id)
-
-	context = {"form":form}
+	context = {"form": form}
 
 	return render(request, "create_article.html", context)
 
@@ -42,3 +40,6 @@ def edit_article(request, article_id):
 
 	context = {"form": form, "article": article}
 	return render(request, "edit_article.html", context)
+
+def my_articles_list(request):
+	return render(request, "my_articles_list.html")

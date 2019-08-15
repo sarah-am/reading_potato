@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <ul>
+        {% for article in user.articles.all %}
+            <li>
+                <a href="{% url 'article-details' article.id %}">
+                    <h1>{{article.title}}</h1>
+                </a>
+                <p>{{article.created_on}}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock content%}
+
+
+<!-- "user.articles.all" uses the related name of the User foreign key in the model -->
