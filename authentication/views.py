@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from .forms import UserRegister, UserLogin
 
 
@@ -35,3 +35,8 @@ def login_view(request):
 	context = {"form": form}
 
 	return render(request, "login.html", context)
+
+
+def logout_view(request):
+	logout(request)
+	return redirect('articles-list')
