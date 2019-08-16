@@ -14,14 +14,14 @@ def register(request):
 			login(request, user)
 			return redirect("articles-list")
 	context = {
-        "form":form,
-    }
+		"form":form,
+	}
 	return render(request, 'register.html', context)
 
 
 def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('articles-list')	
+	if request.user.is_authenticated:
+		return redirect('articles-list')    
 	form = UserLogin()
 	if request.method == "POST":
 		form = UserLogin(request.POST)

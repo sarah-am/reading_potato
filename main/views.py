@@ -3,19 +3,19 @@ from .models import Article
 from .forms import ArticleForm
 
 def articles_list(request):
-    articles = Article.objects.all()
-    context = {
-        "articles" : articles,
-    }
-    return render(request, "articles_list.html", context)
+	articles = Article.objects.all()
+	context = {
+		"articles" : articles,
+	}
+	return render(request, "articles_list.html", context)
 
 def article_details(request, article_id):
-    context = { "article" : Article.objects.get(id=article_id)}
-    return render(request, "article_details.html", context)
+	context = { "article" : Article.objects.get(id=article_id)}
+	return render(request, "article_details.html", context)
 
 def create_article(request):
-    if request.user.is_anonymous:
-    	return redirect('login')	
+	if request.user.is_anonymous:
+		return redirect('login')    
 	form = ArticleForm()
 	if request.method == "POST":
 		form = ArticleForm(request.POST)
@@ -47,6 +47,6 @@ def edit_article(request, article_id):
 	return render(request, "edit_article.html", context)
 
 def my_articles_list(request):
-    if request.user.is_anonymous:
-    	return redirect('login')
+	if request.user.is_anonymous:
+		return redirect('login')
 	return render(request, "my_articles_list.html")
