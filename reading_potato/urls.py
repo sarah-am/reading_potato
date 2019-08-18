@@ -34,4 +34,5 @@ urlpatterns = [
 
     path('contribute/<article_id>/', views.contribute_to_article, name="contribute-to-article"),
     path('my-contributions/', views.my_contributions_list, name="my-contributions-list"),
+    path('contributions/', views.contributions_list, name="contributions-list"),
 ]

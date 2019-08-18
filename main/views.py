@@ -82,4 +82,14 @@ def my_contributions_list(request):
 
 	return render(request, "my_contributions_list.html")
 
+def contributions_list(request):
+	if request.user.is_anonymous:
+		return redirect('articles-list')
 
+	contributions = Contribution.objects.filter(status=Contribution.PENDING, article__author=request.user)
+	context = {"contributions" : contributions}
+	
+	return render(request, 'contributions_list.html', context)
+
+	# we were able to filter according to the author of the article (where article is a field in the Contribution model) 
+	# by using __(double underscore) which allows us to get the value of one of the article's fields.
