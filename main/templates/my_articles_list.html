@@ -4,7 +4,7 @@
     <ul>
         {% for article in user.articles.all %}
             <li>
-                <a href="{% url 'article-details' article.id %}">
+                <a href="{% url 'article-details' article.slug %}">
                     <h1>{{article.title}}</h1>
                 </a>
                 <p>{{article.created_on}}</p>

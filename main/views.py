@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Article, Contribution, Change
 from .forms import ArticleForm, ContributeArticleForm
+
 import difflib
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -30,8 +31,17 @@ def articles_list(request):
 	}
 	return render(request, "articles_list.html", context)
 
-def article_details(request, article_id):
-	context = { "article" : Article.objects.get(id=article_id)}
+def article_details(request, article_slug):
+	article = Article.objects.get(slug=article_slug)
+	if settings.DEBUG:
+		contributions = article.contributions.filter(status=Contribution.ACCEPTED)
+	else:
+		contributions = article.contributions.filter(status=Contribution.ACCEPTED).distinct('user')
+
+	context = {
+		"article": article,
+		"contributions": contributions,
+		}
 	return render(request, "article_details.html", context)
 
 def create_article(request):
@@ -44,17 +54,17 @@ def create_article(request):
 			article = form.save(commit=False)
 			article.author = request.user
 			article.save()
-			return redirect('article-details', article.id)
+			return redirect('article-details', article.slug)
 
 	context = {"form": form}
 
 	return render(request, "create_article.html", context)
 
-def edit_article(request, article_id):
-	article = Article.objects.get(id=article_id)
+def edit_article(request, article_slug):
+	article = Article.objects.get(slug=article_slug)
 
 	if article.author != request.user:
-		return redirect('article-details', article_id)
+		return redirect('article-details', article_slug)
 
 	form = ArticleForm(instance=article)
 	if request.method == "POST":
@@ -62,7 +72,7 @@ def edit_article(request, article_id):
 
 		if form.is_valid():
 			form.save()
-			return redirect("article-details", article_id)
+			return redirect("article-details", article_slug)
 
 	context = {"form": form, "article": article}
 	return render(request, "edit_article.html", context)
@@ -73,15 +83,15 @@ def my_articles_list(request):
 	return render(request, "my_articles_list.html")
 
 
-def contribute_to_article(request, article_id):
+def contribute_to_article(request, article_slug):
 	if request.user.is_anonymous:
 		return redirect('login')
 		
-	article = Article.objects.get(id=article_id)
+	article = Article.objects.get(slug=article_slug)
 	
 	#the author shouldn't be able to contribute, they can only edit
 	if article.author == request.user:
-		return redirect('edit-article', article_id)
+		return redirect('edit-article', article_slug)
 
 	form = ContributeArticleForm(instance=article)
 	if request.method == "POST":
@@ -177,18 +187,3 @@ def decline_changes(request, contribution_id):
 	contribution.change.delete()
 
 	return redirect('contributions-list')
-
-def article_details(request, article_id):
-	article = Article.objects.get(id=article_id)
-	if settings.DEBUG:
-		contributions = article.contributions.filter(status=Contribution.ACCEPTED)
-	else:
-		contributions = article.contributions.filter(status=Contribution.ACCEPTED).distinct('user')
-
-	context = {
-		"article": article,
-		"contributions": contributions,
-		}
-	return render(request, "article_details.html", context)
-
-
