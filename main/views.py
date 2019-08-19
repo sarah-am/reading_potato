@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Article, Contribution, Change
 from .forms import ArticleForm, ContributeArticleForm
 import difflib
+from django.conf import settings
+
 
 
 def articles_list(request):
@@ -158,3 +160,18 @@ def decline_changes(request, contribution_id):
 	contribution.change.delete()
 
 	return redirect('contributions-list')
+
+def article_details(request, article_id):
+	article = Article.objects.get(id=article_id)
+	if settings.DEBUG:
+		contributions = article.contributions.filter(status=Contribution.ACCEPTED)
+	else:
+		contributions = article.contributions.filter(status=Contribution.ACCEPTED).distinct('user')
+
+	context = {
+		"article": article,
+		"contributions": contributions,
+		}
+	return render(request, "article_details.html", context)
+
+
