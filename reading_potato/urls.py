@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from main import views
 from authentication import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -35,4 +37,8 @@ urlpatterns = [
     path('contribute/<article_id>/', views.contribute_to_article, name="contribute-to-article"),
     path('my-contributions/', views.my_contributions_list, name="my-contributions-list"),
     path('contributions/', views.contributions_list, name="contributions-list"),
+    path('contributions/<int:contribution_id>/', views.contribution_details, name="contribution-details"),
 ]
+
+
+urlpatterns+=static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

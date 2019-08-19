@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import Article, Contribution, Change
 from .forms import ArticleForm, ContributeArticleForm
+import difflib
+
 
 def articles_list(request):
 	articles = Article.objects.all()
@@ -93,3 +95,35 @@ def contributions_list(request):
 
 	# we were able to filter according to the author of the article (where article is a field in the Contribution model) 
 	# by using __(double underscore) which allows us to get the value of one of the article's fields.
+
+
+# import difflib
+
+# string1 = """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+# Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+# Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+# """
+
+# string2 = """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+# Unos aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+# """
+
+# d = difflib.Differ()
+# comparison = d.compare(string1.splitlines(), string2.splitlines())
+# print(list(comparison))
+
+
+def contribution_details(request, contribution_id):
+	contribution = Contribution.objects.get(id=contribution_id)
+	if request.user != contribution.article.author:
+		return redirect('articles-list')
+
+	d = difflib.Differ()
+	comparison = list(d.compare(contribution.article.content.splitlines(True), contribution.change.new_content.splitlines(True)))
+
+	context = {
+		"contribution" : contribution,
+		"comparison" : comparison,
+	}
+	
+	return render(request, 'contribution_details.html', context)
