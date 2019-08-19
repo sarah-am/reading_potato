@@ -5,13 +5,17 @@ import difflib
 from django.conf import settings
 
 
-
 def articles_list(request):
-	articles = Article.objects.all()
-	context = {
-		"articles" : articles,
-	}
-	return render(request, "articles_list.html", context)
+    articles = Article.objects.all()
+
+    query = request.GET.get("q")
+    if query:
+        articles = articles.filter(title__icontains=query)
+
+    context = {
+        "articles" : articles,
+    }
+    return render(request, "articles_list.html", context)
 
 def article_details(request, article_id):
 	context = { "article" : Article.objects.get(id=article_id)}
