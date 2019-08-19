@@ -11,4 +11,6 @@
     		{{line}}</p>
     	{% endif %}
     {% endfor %}
+    <a href="{% url 'accept-changes' contribution.id %}">Accept</a>
+    <a href="{% url 'decline-changes' contribution.id %}">Decline</a>
 {% endblock content%}
